@@ -1,0 +1,188 @@
+<div class="container" style="text-align: right; padding-bottom: 20px;">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      <i class="fa-solid fa-circle-plus"></i> Agregar Usuario
+</button>
+
+</div>
+
+<div class="card " style="width: 67rem;">
+    <div class="card-body table-responsive">
+        <h2 class="card-title">Usuarios</h2>
+        <div *ngIf="cargando && info.length>0" class="fa-3x" style="color: grey; text-align: center;">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+            <h4>Cargando informacion...</h4>
+        </div>
+
+        <div *ngIf="!cargando && info.length===0" style="color: grey; text-align: center;">
+            <h4>No hay registros.</h4>
+        </div>
+        <table class="table">
+            <thead style="color: grey;">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">Fecha Nacimiento</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">N° Documento</th>
+                    <th scope="col">Area</th>
+                    <th scope="col">Salario</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of getdatos; let i=index">
+                    <td>{{data.nombre}}</td>
+                    <td>{{data.apellido}}</td>
+                    <td>{{data.fecha| date}}</td>
+                    <td>{{data.email}}</td>
+                    <td>{{data.documento}}</td>
+                    <td>{{data.area}}</td>
+                    <td>{{data.salario | currency}}</td>
+                    <td>
+                        <div *ngIf="data.estado">
+                            <span class="badge bg-success">Activo</span>
+                        </div>
+                        <div *ngIf="!data.estado">
+                            <span class="badge bg-danger">Inactivo</span>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#actualizar">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                        <button type="button" (click)="borrarUsuario(usuario, i)" class="btn btn-danger">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form [formGroup]="formulario" (submit)="guardar()">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Creacion de Usuarios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Nombre</span>
+                        <input type="text" formControlName="nombre" maxlength="50" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Apellido</span>
+                        <input type="text" formControlName="apellido" maxlength="50" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Fecha nacimiento</span>
+                        <input class="form-control" formControlName="fecha" type="date" id="example-date-input" />
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">email</span>
+                        <input type="email" formControlName="email" maxlength="50" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">N° documento</span>
+                        <input type="number" formControlName="documento" maxlength="7" min="0" max="9999999" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelect01">Area</label>
+                        <select class="form-select" id="inputGroupSelect01" formControlName="area">
+                          <option selected>Seleccione el area</option>
+                          <option *ngFor="let user of data">{{user.codigo}}</option>
+
+                  </select>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Salario</span>
+                        <input type="number" formControlName="salario" formControlName="salario" maxlength="10" min="0" max="9999999999" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" formControlName="estado" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+                            <label class="form-check-label" for="flexSwitchCheckChecked">Inactivo/Activo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal actualizar -->
+<div class="modal fade" id="actualizar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Creacion de Usuarios</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Nombre</span>
+                        <input type="text" required [(ngModel)]="usuario.nombre" name="nombre" maxlength="50" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Apellido</span>
+                        <input type="text" required [(ngModel)]="usuario.apellido" name="apellido" maxlength="50" formControlName="apellido" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Fecha nacimiento</span>
+                        <input class="form-control" required [(ngModel)]="usuario.fecha" name="fecha" type="date" formControlName="fecha" value="2022-04-27" id="example-date-input" />
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">email</span>
+                        <input type="email" required [(ngModel)]="usuario.email" name="email" maxlength="50" formControlName="email" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">N° documento</span>
+                        <input type="number" [(ngModel)]="usuario.documento" name="documento" required maxlength="7" min="0" max="9999999" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupSelect01">Area</label>
+                        <select class="form-select" id="inputGroupSelect01" required [(ngModel)]="usuario.area" name="area">
+                <option>Choose...</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Salario</span>
+                        <input type="number" [(ngModel)]="usuario.salario" name="salario" required maxlength="10" min="0" max="9999999999" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" [(ngModel)]="usuario.estado" name="estado" required type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
+                            <label class="form-check-label" for="flexSwitchCheckChecked">Inactivo/Activo</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

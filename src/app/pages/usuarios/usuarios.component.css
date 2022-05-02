@@ -1,0 +1,12 @@
+.btn-danger {
+    background-color: transparent !important;
+    color: gray !important;
+    border-color: transparent !important;
+    border: 0px !important;
+}
+
+.btn-warning {
+    background-color: transparent !important;
+    color: gray !important;
+    border-color: transparent !important;
+}
